@@ -1,0 +1,116 @@
+name: DEV Template
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        required: true
+        type: string
+      ecr-repo:
+        required: false
+        type: string
+      ecs-cluster:
+        required: true
+        type: string
+      ecs-service:
+        required: false
+        type: string
+      image-tag:
+        required: false
+        type: string
+      task-def-file:
+        required: false
+        type: string
+      container-name:
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to ECS DEV
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Dynamic Variables
+        id: vars
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+
+          # Use input or fallback to repo name
+          echo "ECR_REPO=${{ inputs.ecr-repo || REPO_NAME }}" >> $GITHUB_ENV
+          echo "ECS_SERVICE=${{ inputs.ecs-service || REPO_NAME }}" >> $GITHUB_ENV
+          
+          TASK_DEF_FILE="${{ inputs.task-def-file }}"
+          if [ -z "$TASK_DEF_FILE" ]; then
+            TASK_DEF_FILE="$REPO_NAME.json"
+          fi
+          echo "ECS_TASK_DEFINITION=${{ github.workspace }}/.github/ecs-task-definitions/dev/$TASK_DEF_FILE" >> $GITHUB_ENV
+
+          CONTAINER_NAME="${{ inputs.container-name }}"
+          if [ -z "$CONTAINER_NAME" ]; then
+          CONTAINER_NAME="$REPO_NAME"
+          fi
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+
+          # Set image tag to input or fallback to Git tag name or run number
+          TAG="${{ inputs.image-tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="${GITHUB_REF##*/}"  # fallback to tag name or branch name
+          fi
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-region }}
+
+      # - name: Login to Amazon ECR
+      #   run: |
+      #     aws ecr get-login-password --region ${{ inputs.aws-region }} \
+      #       | docker login --username AWS --password-stdin \
+      #         "${{ inputs.aws-region }}.dkr.ecr.amazonaws.com"
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR Repository Exists
+        run: |
+          aws ecr describe-repositories \
+            --repository-names "$ECR_REPO" \
+            --region ${{ inputs.aws-region }} >/dev/null 2>&1 || \
+          aws ecr create-repository \
+            --repository-name "$ECR_REPO" \
+            --region ${{ inputs.aws-region }}
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_URI=861276123407.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/dev/$ECR_REPO:$IMAGE_TAG
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: 861276123407.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/dev/$ECR_REPO:$IMAGE_TAG
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ inputs.ecs-cluster }}
+          wait-for-service-stability: true

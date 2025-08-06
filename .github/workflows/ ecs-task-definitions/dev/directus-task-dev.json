@@ -1,0 +1,301 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:861276123407:task-definition/directus-task-dev:2",
+    "containerDefinitions": [
+        {
+            "name": "directus-cont-dev",
+            "image": "861276123407.dkr.ecr.ap-southeast-1.amazonaws.com/k-nex/cms:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "directus-cont-dev-8055-tcp",
+                    "containerPort": 8055,
+                    "hostPort": 8055,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:HOST::"
+                },
+                {
+                    "name": "PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:PORT::"
+                },
+                {
+                    "name": "PUBLIC_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:PUBLIC_URL::"
+                },
+                {
+                    "name": "DB_CLIENT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_CLIENT::"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_HOST::"
+                },
+                {
+                    "name": "DB_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_PORT::"
+                },
+                {
+                    "name": "DB_DATABASE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_DATABASE::"
+                },
+                {
+                    "name": "DB_USER",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_USER::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_PASSWORD::"
+                },
+                {
+                    "name": "DB_SSL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_SSL::"
+                },
+                {
+                    "name": "DB_SSL__CA_FILE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_SSL__CA_FILE::"
+                },
+                {
+                    "name": "DB_SSL__REQUIRE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:DB_SSL__REQUIRE::"
+                },
+                {
+                    "name": "RATE_LIMITER_ENABLED",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:RATE_LIMITER_ENABLED::"
+                },
+                {
+                    "name": "RATE_LIMITER_STORE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:RATE_LIMITER_STORE::"
+                },
+                {
+                    "name": "RATE_LIMITER_POINTS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:RATE_LIMITER_POINTS::"
+                },
+                {
+                    "name": "RATE_LIMITER_DURATION",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:RATE_LIMITER_DURATION::"
+                },
+                {
+                    "name": "CACHE_ENABLED",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CACHE_ENABLED::"
+                },
+                {
+                    "name": "STORAGE_LOCATIONS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_LOCATIONS::"
+                },
+                {
+                    "name": "STORAGE_S3_DRIVER",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_DRIVER::"
+                },
+                {
+                    "name": "STORAGE_S3_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_KEY::"
+                },
+                {
+                    "name": "STORAGE_S3_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_SECRET::"
+                },
+                {
+                    "name": "STORAGE_S3_BUCKET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_BUCKET::"
+                },
+                {
+                    "name": "STORAGE_S3_REGION",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_REGION::"
+                },
+                {
+                    "name": "STORAGE_S3_ENDPOINT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_ENDPOINT::"
+                },
+                {
+                    "name": "STORAGE_S3_FORCE_PATH_STYLE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:STORAGE_S3_FORCE_PATH_STYLE::"
+                },
+                {
+                    "name": "KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:KEY::"
+                },
+                {
+                    "name": "SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:SECRET::"
+                },
+                {
+                    "name": "ACCESS_TOKEN_TTL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:ACCESS_TOKEN_TTL::"
+                },
+                {
+                    "name": "REFRESH_TOKEN_TTL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:REFRESH_TOKEN_TTL::"
+                },
+                {
+                    "name": "REFRESH_TOKEN_COOKIE_SECURE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:REFRESH_TOKEN_COOKIE_SECURE::"
+                },
+                {
+                    "name": "REFRESH_TOKEN_COOKIE_SAME_SITE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:REFRESH_TOKEN_COOKIE_SAME_SITE::"
+                },
+                {
+                    "name": "REFRESH_TOKEN_COOKIE_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:REFRESH_TOKEN_COOKIE_NAME::"
+                },
+                {
+                    "name": "AUTH_PROVIDERS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:AUTH_PROVIDERS::"
+                },
+                {
+                    "name": "EXTENSIONS_PATH",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EXTENSIONS_PATH::"
+                },
+                {
+                    "name": "EMAIL_FROM",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_FROM::"
+                },
+                {
+                    "name": "EMAIL_TRANSPORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_TRANSPORT::"
+                },
+                {
+                    "name": "EMAIL_SMTP_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_SMTP_HOST::"
+                },
+                {
+                    "name": "EMAIL_SMTP_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_SMTP_PORT::"
+                },
+                {
+                    "name": "EMAIL_SMTP_USER",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_SMTP_USER::"
+                },
+                {
+                    "name": "EMAIL_SMTP_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_SMTP_PASSWORD::"
+                },
+                {
+                    "name": "EMAIL_SMTP_SECURE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:EMAIL_SMTP_SECURE::"
+                },
+                {
+                    "name": "ADMIN_EMAIL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:ADMIN_EMAIL::"
+                },
+                {
+                    "name": "ADMIN_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:ADMIN_PASSWORD::"
+                },
+                {
+                    "name": "CORS_ENABLED",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_ENABLED::"
+                },
+                {
+                    "name": "CORS_ORIGIN",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_ORIGIN::"
+                },
+                {
+                    "name": "CORS_METHODS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_METHODS::"
+                },
+                {
+                    "name": "CORS_ALLOWED_HEADERS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_ALLOWED_HEADERS::"
+                },
+                {
+                    "name": "CORS_EXPOSED_HEADERS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_EXPOSED_HEADERS::"
+                },
+                {
+                    "name": "CORS_CREDENTIALS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:CORS_CREDENTIALS::"
+                },
+                {
+                    "name": "ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:861276123407:secret:k-nex-cms-secret-UryHch:ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION::"
+                }
+            ],
+            "startTimeout": 60,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/directus-task-dev",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "directus-task-dev",
+    "taskRoleArn": "arn:aws:iam::861276123407:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::861276123407:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 2,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "ecs.capability.container-ordering"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "2048",
+    "memory": "4096",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2025-04-24T06:16:54.888Z",
+    "registeredBy": "arn:aws:iam::861276123407:user/socket9",
+    "enableFaultInjection": false,
+    "tags": []
+}
