@@ -3,9 +3,6 @@ name: DEV Template
 on:
   workflow_call:
     inputs:
-      aws-region:
-        required: true
-        type: string
       ecr-repo:
         required: false
         type: string
@@ -29,6 +26,8 @@ on:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_REGION:
+        required: true
 
 jobs:
   deploy:
@@ -46,8 +45,17 @@ jobs:
           echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
 
           # Use input or fallback to repo name
-          echo "ECR_REPO=${{ inputs.ecr-repo || REPO_NAME }}" >> $GITHUB_ENV
-          echo "ECS_SERVICE=${{ inputs.ecs-service || REPO_NAME }}" >> $GITHUB_ENV
+          ECR_REPO="${{ inputs.ecr-repo }}"
+          if [ -z "$ECR_REPO" ]; then
+            ECR_REPO="$REPO_NAME"
+          fi
+            echo "ECR_REPO=$ECR_REPO" >> $GITHUB_ENV
+
+          ECS_SERVICE="${{ inputs.ecs-service }}"
+          if [ -z "$ECS_SERVICE" ]; then
+            ECS_SERVICE="$REPO_NAME"
+          fi
+            echo "ECS_SERVICE=$ECS_SERVICE" >> $GITHUB_ENV
           
           TASK_DEF_FILE="${{ inputs.task-def-file }}"
           if [ -z "$TASK_DEF_FILE" ]; then
@@ -64,7 +72,7 @@ jobs:
           # Set image tag to input or fallback to Git tag name or run number
           TAG="${{ inputs.image-tag }}"
           if [ -z "$TAG" ]; then
-            TAG="${GITHUB_REF##*/}"  # fallback to tag name or branch name
+            TAG="${{ github.ref_name }}"
           fi
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
 
@@ -73,13 +81,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws-region }}
-
-      # - name: Login to Amazon ECR
-      #   run: |
-      #     aws ecr get-login-password --region ${{ inputs.aws-region }} \
-      #       | docker login --username AWS --password-stdin \
-      #         "${{ inputs.aws-region }}.dkr.ecr.amazonaws.com"
+          aws-region: ${{ secrets.AWS_REGION}}
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -88,14 +90,14 @@ jobs:
         run: |
           aws ecr describe-repositories \
             --repository-names "$ECR_REPO" \
-            --region ${{ inputs.aws-region }} >/dev/null 2>&1 || \
+            --region ${{ secrets.AWS_REGION}} >/dev/null 2>&1 || \
           aws ecr create-repository \
             --repository-name "$ECR_REPO" \
-            --region ${{ inputs.aws-region }}
+            --region ${{ secrets.AWS_REGION}}
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE_URI=861276123407.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/dev/$ECR_REPO:$IMAGE_TAG
+          IMAGE_URI=861276123407.dkr.ecr.${{ secrets.AWS_REGION}}.amazonaws.com/knex-dev/$ECR_REPO:$IMAGE_TAG
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
@@ -105,7 +107,7 @@ jobs:
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: 861276123407.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/dev/$ECR_REPO:$IMAGE_TAG
+          image: 861276123407.dkr.ecr.${{ secrets.AWS_REGION}}.amazonaws.com/knex-dev/$ECR_REPO:$IMAGE_TAG
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
