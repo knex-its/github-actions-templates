@@ -75,14 +75,6 @@ jobs:
             TAG="${{ github.ref_name }}"
           fi
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
-      
-      - name: Debug secrets availability
-        run: |
-          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
-            echo "AWS_ACCESS_KEY_ID is empty or not available"
-          else
-            echo "AWS_ACCESS_KEY_ID is set (hidden)"
-          fi
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.3.1
