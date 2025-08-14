@@ -35,11 +35,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Caller Repo
+      - name: Checkout Template Repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
+          repository: knex-its/github-actions-templates
+          ref: main
+          path: template_repo
 
       - name: Set Dynamic Variables
         id: vars
@@ -64,7 +65,7 @@ jobs:
           if [ -z "$TASK_DEF_FILE" ]; then
             TASK_DEF_FILE="$REPO_NAME.json"
           fi
-          echo "ECS_TASK_DEFINITION=${{ github.workspace }}/${{ inputs.task-def-file }}" >> $GITHUB_ENV
+          echo "ECS_TASK_DEFINITION=${{ github.workspace }}/template_repo/.github/workflows/ecs-task-definitions/dev/$TASK_DEF_FILE"
 
           CONTAINER_NAME="${{ inputs.container-name }}"
           if [ -z "$CONTAINER_NAME" ]; then
