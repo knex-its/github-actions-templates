@@ -12,6 +12,9 @@ on:
       ecs-service:
         required: false
         type: string
+      ecs-task:
+        required: false
+        type: string
       image-tag:
         required: false
         type: string
@@ -46,6 +49,12 @@ jobs:
             ECR_REPO="$REPO_NAME"
           fi
             echo "ECR_REPO=$ECR_REPO" >> $GITHUB_ENV
+
+          ECS_TASK="${{ inputs.ecs-task }}"
+          if [ -z "$ECS_TASK" ]; then
+            ECS_TASK="$REPO_NAME"
+          fi
+            echo "ECS_TASK=$ECS_TASK" >> $GITHUB_ENV
 
           ECS_SERVICE="${{ inputs.ecs-service }}"
           if [ -z "$ECS_SERVICE" ]; then
@@ -96,7 +105,7 @@ jobs:
         id: download-task
         run: |
           aws ecs describe-task-definition \
-            --task-definition ${{ env.ECS_SERVICE }} \
+            --task-definition ${{ env.ECS_TASK}} \
             --query "taskDefinition" > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
