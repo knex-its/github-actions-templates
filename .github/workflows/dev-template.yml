@@ -90,26 +90,20 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+
       - name: Download Current ECS Task Definition
         id: download-task
         run: |
-          LATEST_TASK_DEF=$(aws ecs describe-services \
-            --services ${{ env.ECS_SERVICE }} \
-            --cluster ${{ inputs.ecs-cluster }} \
-            --query "services[0].taskDefinition" \
-            --output text)
-
           aws ecs describe-task-definition \
-            --task-definition $LATEST_TASK_DEF \
+            --task-definition ${{ env.ECS_SERVICE }} \
             --query "taskDefinition" > task-definition.json
-
-          echo "TASK_DEF_FILE=$GITHUB_WORKSPACE/task-definition.json" >> $GITHUB_ENV
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1.7.5
         with:
-          task-definition: ${{ env.TASK_DEF_FILE }}
+          task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ env.IMAGE_URI }}
 
