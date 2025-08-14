@@ -15,9 +15,6 @@ on:
       image-tag:
         required: false
         type: string
-      task-def-file:
-        required: false
-        type: string
       container-name:
         required: false
         type: string
@@ -44,7 +41,6 @@ jobs:
           REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
           echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
 
-          # Use input or fallback to repo name
           ECR_REPO="${{ inputs.ecr-repo }}"
           if [ -z "$ECR_REPO" ]; then
             ECR_REPO="$REPO_NAME"
@@ -56,12 +52,6 @@ jobs:
             ECS_SERVICE="$REPO_NAME"
           fi
             echo "ECS_SERVICE=$ECS_SERVICE" >> $GITHUB_ENV
-          
-          TASK_DEF_FILE="${{ inputs.task-def-file }}"
-          if [ -z "$TASK_DEF_FILE" ]; then
-            TASK_DEF_FILE="$REPO_NAME.json"
-          fi
-          echo "ECS_TASK_DEFINITION=$GITHUB_WORKSPACE/${{ inputs.task-def-file }}" >> $GITHUB_ENV
 
           CONTAINER_NAME="${{ inputs.container-name }}"
           if [ -z "$CONTAINER_NAME" ]; then
@@ -69,7 +59,6 @@ jobs:
           fi
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
 
-          # Set image tag to input or fallback to Git tag name or run number
           TAG="${{ inputs.image-tag }}"
           if [ -z "$TAG" ]; then
             TAG="${{ github.ref_name }}"
@@ -101,13 +90,28 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
+      - name: Download Current ECS Task Definition
+        id: download-task
+        run: |
+          LATEST_TASK_DEF=$(aws ecs describe-services \
+            --services ${{ env.ECS_SERVICE }} \
+            --cluster ${{ inputs.ecs-cluster }} \
+            --query "services[0].taskDefinition" \
+            --output text)
+
+          aws ecs describe-task-definition \
+            --task-definition $LATEST_TASK_DEF \
+            --query "taskDefinition" > task-definition.json
+
+          echo "TASK_DEF_FILE=$GITHUB_WORKSPACE/task-definition.json" >> $GITHUB_ENV
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1.7.5
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          task-definition: ${{ env.TASK_DEF_FILE }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: 861276123407.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/knex-dev/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+          image: ${{ env.IMAGE_URI }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
