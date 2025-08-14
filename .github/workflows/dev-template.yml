@@ -37,9 +37,6 @@ jobs:
     steps:
       - name: Checkout Caller Repo
         uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
 
       - name: Set Dynamic Variables
         id: vars
@@ -64,7 +61,7 @@ jobs:
           if [ -z "$TASK_DEF_FILE" ]; then
             TASK_DEF_FILE="$REPO_NAME.json"
           fi
-          echo "ECS_TASK_DEFINITION=${{ inputs.task-def-file }}" >> $GITHUB_ENV
+          echo "ECS_TASK_DEFINITION=$GITHUB_WORKSPACE/${{ inputs.task-def-file }}" >> $GITHUB_ENV
 
           CONTAINER_NAME="${{ inputs.container-name }}"
           if [ -z "$CONTAINER_NAME" ]; then
