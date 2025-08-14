@@ -96,8 +96,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE_URI=861276123407.dkr.ecr.${{ secrets.AWS_REGION}}.amazonaws.com/knex-dev/$ECR_REPO:$IMAGE_TAG
-          sudo docker build -t $IMAGE_URI .
-          sudo docker push $IMAGE_URI
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
 
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
